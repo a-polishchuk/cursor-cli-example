@@ -7,7 +7,7 @@ import fs from 'fs';
 (async function () {
     console.log('🔍 fetching fact...');
     const dateString = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-    const fact = await promptCursor(`Give me one historical fact happened on ${dateString}. Fit it to one sentence.`);
+    const fact = await promptCursor(`Give me one interesting historical fact happened on ${dateString}. Fit it to one sentence.`);
     if (!fact) {
         console.log('‼️ no fact found');
         return;
