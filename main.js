@@ -14,18 +14,17 @@ import fs from 'fs';
     }
     console.log('🔍 done:', fact);
 
-    if (fs.existsSync(`./${OUTPUT_DIR}`)) {
-        fs.readdirSync(`./${OUTPUT_DIR}`).forEach(f => fs.unlinkSync(`./${OUTPUT_DIR}/${f}`));
-    } else {
+    if (!fs.existsSync(`./${OUTPUT_DIR}`)) {
         fs.mkdirSync(`./${OUTPUT_DIR}`);
+        console.log('🗃️ created output directory');
     }
 
-    console.log('🎤 generating text-to-speech audio track');
+    console.log('🎤 generating text-to-speech audio track...');
     const fileName = factToFileName(fact);
     await generateTTS(fact, `${fileName}.mp3`);
     console.log('🎤 done');
 
-    console.log('🎥 generating tiktok video');
+    console.log('🎥 generating tiktok video...');
     await generateVideo(fact, fileName);
 })()
     .then(() => console.log('🏁 Done!'))
