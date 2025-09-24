@@ -6,5 +6,5 @@ export function factToFileName(fact) {
         .filter(Boolean)
         .slice(0, 6)
         .join('-');
-    return `output/${fileName}`;
+    return `../output/${fileName}`;
 }

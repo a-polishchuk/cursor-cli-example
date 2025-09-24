@@ -1,23 +1,20 @@
-import axios from 'axios';
+export const NO_IMAGE_FOUND = 'NO_IMAGE_FOUND';
 
 export async function findImageUrl(fact) {
-    try {
-        const imagesResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(fact)}&prop=images&format=json`);
-        const pages = imagesResponse.data.query.pages;
-        const pageId = Object.keys(pages)[0];
-        const images = pages[pageId].images;
-        if (images.length === 0) {
-            console.log('‼️ NO_IMAGE_FOUND');
-            return;
-        }
-
-        const imageTitle = images[0].title;
-        const imageInfoResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(imageTitle)}&prop=imageinfo&iiprop=url&format=json`);
-        const imagePages = imageInfoResponse.data.query.pages;
-        const imagePageId = Object.keys(imagePages)[0];
-        const url = imagePages[imagePageId].imageinfo[0].url;
-        console.log(url);
-    } catch (error) {
-        console.error('Error:', error.message);
+    const imagesResponse = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(fact)}&prop=images&format=json`);
+    const imagesData = await imagesResponse.json();
+    const pages = imagesData.query.pages;
+    const pageId = Object.keys(pages)[0];
+    const images = pages[pageId].images;
+    if (images.length === 0) {
+        return NO_IMAGE_FOUND;
     }
+
+    const imageInfoResponse = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(images[0].title)}&prop=imageinfo&iiprop=url&format=json`);
+    const imageInfoData = await imageInfoResponse.json();
+    const imagePages = imageInfoData.query.pages;
+    const imagePageId = Object.keys(imagePages)[0];
+    const url = imagePages[imagePageId].imageinfo[0].url;
+
+    return url;
 }
