@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "wikipedia": {
-      "command": "npx",
-      "args": ["-y", "@shelm/wikipedia-mcp-server"]
-    }
-  }
-}

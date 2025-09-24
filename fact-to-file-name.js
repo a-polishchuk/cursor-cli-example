@@ -1,3 +1,5 @@
+export const OUTPUT_DIR = 'output';
+
 export function factToFileName(fact) {
     const fileName = fact
         .toLowerCase()
@@ -6,5 +8,6 @@ export function factToFileName(fact) {
         .filter(Boolean)
         .slice(0, 6)
         .join('-');
-    return `../output/${fileName}`;
+
+    return `./${OUTPUT_DIR}/${fileName}`;
 }

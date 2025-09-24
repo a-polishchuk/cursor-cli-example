@@ -1,10 +1,14 @@
-export async function promptCursor(prompt, model = 'gpt-5') {
-    const command = `cursor-agent --print --output-format text --model "${model}" -p "${prompt}"`;
+export async function promptCursor(prompt) {
+    const command = `timeout 40 cursor-agent --force --print --output-format text -p "${prompt}"`;
     const { exec } = await import('child_process');
 
     const llmResponse = await new Promise((resolve, reject) => {
         const child = exec(command, {}, (error, stdout, stderr) => {
             if (error) {
+                if (error.code === 124) {
+                    // timed out but it's okay 🤷🏼‍♂️
+                    resolve(stdout.trim());
+                }
                 return reject(error);
             }
             if (stderr) {
@@ -18,3 +22,4 @@ export async function promptCursor(prompt, model = 'gpt-5') {
     return llmResponse;
 }
 
+// promptCursor('Give me one interesting history fact about this day of the year. Just one sentence, nothing else.');

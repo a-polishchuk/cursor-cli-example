@@ -1,30 +1,29 @@
-import { generateVideo } from './src/generate-video.js';
-import { downloadImage } from './src/download-image.js';
-import { generateTTS } from './src/text-to-speech.js';
-import { factToFileName } from './src/fact-to-file-name.js';
-import { promptCursor } from './src/prompt-cursor.js';
-import { findImageUrl, NO_IMAGE_FOUND } from './src/find-image-url.js';
+import { generateVideo } from './generate-video.js';
+import { generateTTS } from './text-to-speech.js';
+import { factToFileName, OUTPUT_DIR } from './fact-to-file-name.js';
+import { promptCursor } from './prompt-cursor.js';
+import fs from 'fs';
 
 (async function () {
-    console.log('🔍 fetching fact');
-    const fact = await promptCursor('Give me one interesting history fact about this day of the year. Just one sentence, nothing else.');
-    console.log('🔍', fact);
-
-    console.log('🖼️ finding image url');
-    const imageUrl = await findImageUrl(fact);
-    console.log('🖼️', imageUrl);
-
-    if (imageUrl === NO_IMAGE_FOUND) {
-        console.log('‼️ no image found, skipping video generation');
+    console.log('🔍 fetching fact...');
+    const dateString = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    const fact = await promptCursor(`Give me one historical fact happened on ${dateString}. Fit it to one sentence.`);
+    if (!fact) {
+        console.log('‼️ no fact found');
         return;
     }
+    console.log('🔍 done:', fact);
 
-    console.log('🖼️ downloading background image');
-    const fileName = factToFileName(fact);
-    await downloadImage(imageUrl, `${fileName}.jpg`);
+    if (fs.existsSync(`./${OUTPUT_DIR}`)) {
+        fs.readdirSync(`./${OUTPUT_DIR}`).forEach(f => fs.unlinkSync(`./${OUTPUT_DIR}/${f}`));
+    } else {
+        fs.mkdirSync(`./${OUTPUT_DIR}`);
+    }
 
     console.log('🎤 generating text-to-speech audio track');
+    const fileName = factToFileName(fact);
     await generateTTS(fact, `${fileName}.mp3`);
+    console.log('🎤 done');
 
     console.log('🎥 generating tiktok video');
     await generateVideo(fact, fileName);

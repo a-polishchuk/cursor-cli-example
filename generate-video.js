@@ -3,12 +3,12 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
-const DURATION = 10; // seconds
+const DURATION_SEC = 10;
 
 export function generateVideo(text, fileName) {
     return new Promise((resolve, reject) => {
         ffmpeg()
-            .input(`${fileName}.jpg`)
+            .input('./assets/bg.jpg')
             .inputOptions(['-loop 1'])
             .input(`${fileName}.mp3`)
             .videoFilters([
@@ -16,19 +16,19 @@ export function generateVideo(text, fileName) {
                 "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920",
 
                 // Ken Burns effect: zoom from 1.0 to 1.1 over DURATION seconds at 30 fps
-                `zoompan=z='zoom+0.0007':d=${DURATION * 30}:s=1080x1920`,
+                `zoompan=z='zoom+0.0007':d=${DURATION_SEC * 30}:s=1080x1920`,
 
-                `drawtext=fontfile=../fonts/SeymourOne-Regular.ttf:text='follow for more facts':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=300`,
+                `drawtext=fontfile=./fonts/SeymourOne-Regular.ttf:text='follow for more facts':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=300`,
 
-                `drawtext=fontfile=../fonts/CalSans-Regular.ttf:text='${wrapText(text)}':fontcolor=gold:fontsize=70:borderw=8:x=(w-text_w)/2:y=(h-text_h)/2-100:box=1:boxcolor=black@0.5:boxborderw=40`,
+                `drawtext=fontfile=./fonts/CalSans-Regular.ttf:text='${wrapText(text).replace(/'/g, "\\'")}':fontcolor=gold:fontsize=70:borderw=8:x=(w-text_w)/2:y=(h-text_h)/2-100:box=1:boxcolor=black@0.5:boxborderw=40`,
 
-                `drawtext=fontfile=../fonts/ComicRelief-Regular.ttf:text='check the description':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=(h-text_h)/2+250`,
-                `drawtext=fontfile=../fonts/ComicRelief-Regular.ttf:text='for more details':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=(h-text_h)/2+300`
+                `drawtext=fontfile=./fonts/ComicRelief-Regular.ttf:text='check the description':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=(h-text_h)/2+250`,
+                `drawtext=fontfile=./fonts/ComicRelief-Regular.ttf:text='for more details':fontcolor=white:fontsize=50:borderw=6:x=(w-text_w)/2:y=(h-text_h)/2+300`
             ])
             // -t: Set video duration in seconds
             // -r 30: Set frame rate to 30 fps
             // -pix_fmt yuv420p: Use YUV420P pixel format for better compatibility
-            .outputOptions(['-t', DURATION, '-r 30', '-pix_fmt yuv420p'])
+            .outputOptions(['-t', DURATION_SEC, '-r 30', '-pix_fmt yuv420p'])
             .output(`${fileName}.mp4`)
             .on('end', () => resolve())
             .on('error', (err) => reject(err))
