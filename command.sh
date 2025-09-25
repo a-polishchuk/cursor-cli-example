@@ -1,0 +1,1 @@
+cursor-agent --force --print --output-format text -p "Give me one interesting historical fact happened on 25 September. Fit it to one sentence."

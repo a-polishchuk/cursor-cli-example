@@ -6,7 +6,6 @@ export async function promptCursor(prompt) {
         const child = exec(command, {}, (error, stdout, stderr) => {
             if (error) {
                 if (error.code === 124) {
-                    // timed out but it's okay 🤷🏼‍♂️
                     resolve(stdout.trim());
                 }
                 return reject(error);
@@ -21,5 +20,3 @@ export async function promptCursor(prompt) {
 
     return llmResponse;
 }
-
-// promptCursor('Give me one interesting history fact about this day of the year. Just one sentence, nothing else.');
